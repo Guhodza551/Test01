@@ -1,0 +1,220 @@
+#include <NewPing.h>
+#include <Servo.h>
+
+int IN1 = 4;
+int IN2 = 5;
+int IN3 = 6;
+int IN4 = 7;
+int ENA = 3;
+int ENB = 11;
+
+#define TRIG_PIN A0 
+#define ECHO_PIN A1 
+#define MAX_DISTANCE 200
+
+NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE); 
+Servo myservo;
+Servo Attack; 
+
+void setup()
+{
+ myservo.attach(10);
+ myservo.write(90);
+ Attack.attach(9);
+ Attack.write(40);
+ pinMode(IN1, OUTPUT);
+ pinMode(IN2, OUTPUT);
+ pinMode(IN3, OUTPUT);
+ pinMode(IN4, OUTPUT);
+ pinMode(ENA, OUTPUT);
+ pinMode(ENB, OUTPUT);
+}
+
+void loop(){
+int distanceR = 0;
+int distanceL =  0;
+int distanceM = 0;
+delay(40);
+
+distanceR = lookRight();
+delay(200);
+distanceL = lookLeft();
+delay(200);
+distanceM = lookMID();
+delay(200);
+
+if(distanceL <= 20){
+  turnR();
+  delay(1450);
+  stopW();
+  delay(1000);
+  moveF();
+  delay(2350);
+  stopW();
+  delay(1000);
+  turnL();
+  delay(1450);
+  stopW();
+  delay(1000);
+  moveF();
+  delay(1100);
+  moveFS();
+  delay(1000);
+  Att();
+  delay(150);
+  Dtt();
+  delay(100);
+  stopW();
+  delay(1000);
+  }
+if(distanceR <= 20){
+  turnL();
+  delay(1650);
+  stopW();
+  delay(1000);
+  moveF();
+  delay(2000);
+  stopW();
+  delay(1000);
+  turnR();
+  delay(1400);
+  stopW();
+  delay(1000);
+  moveF();
+  delay(1100);
+  moveFS();
+  delay(1000);
+  Att();
+  delay(150);
+  Dtt();
+  delay(100);
+  stopW();
+  delay(1000);
+  }
+  if(distanceM >= 6){
+  moveF();
+  delay(1500);
+  stopW();
+  delay(1000);
+  moveFS();
+  delay(1300);
+  Att();
+  delay(150);
+  Dtt();
+  delay(100);
+  stopW();
+  delay(1000);
+}
+else{
+  stopW();
+  delay(100);
+  Att();
+  delay(150);
+  Dtt();
+  delay(100);
+  stopW();
+  delay(1000);
+  }
+
+}
+void moveF(){
+ analogWrite(3,100);
+ analogWrite(11,110);
+ digitalWrite(IN1, HIGH);
+ digitalWrite(IN2, LOW);
+ delay(0);
+ 
+ digitalWrite(IN3, HIGH);
+ digitalWrite(IN4, LOW);
+ delay(0);
+ }
+void moveFS(){
+ analogWrite(3,210);
+ analogWrite(11,215);
+ digitalWrite(IN1, HIGH);
+ digitalWrite(IN2, LOW);
+ delay(0);
+ 
+ digitalWrite(IN3, HIGH);
+ digitalWrite(IN4, LOW);
+ delay(0);
+ }
+ void stopW(){
+ digitalWrite(IN1, LOW);
+ digitalWrite(IN2, LOW);
+ delay(0);
+ 
+ digitalWrite(IN3, LOW);
+ digitalWrite(IN4, LOW);
+ delay(0);
+ }
+ 
+ void turnL(){
+ analogWrite(3,130);
+ analogWrite(11,130);
+ digitalWrite(IN1, LOW);
+ digitalWrite(IN2, LOW);
+ delay(0);
+ 
+ digitalWrite(IN3, HIGH);
+ digitalWrite(IN4, LOW);
+ delay(0);
+ }
+ void turnR(){
+ analogWrite(3,130);
+ analogWrite(11,130);
+ digitalWrite(IN1, HIGH);
+ digitalWrite(IN2, LOW);
+ delay(0);
+ 
+ digitalWrite(IN3, LOW);
+ digitalWrite(IN4, LOW);
+ delay(0);
+ }
+int lookRight()
+{
+    myservo.write(0); 
+    delay(500);
+    int distance = readPing();
+    delay(100);
+    return distance;
+}
+
+int lookLeft()
+{
+    myservo.write(180); 
+    delay(500);
+    int distance = readPing();
+    delay(100);
+    return distance;
+    delay(100);
+}
+int lookMID()
+{
+    myservo.write(90); 
+    delay(500);
+    int distance = readPing();
+    delay(100);
+    return distance;
+    delay(100);
+}
+
+void Att(){
+  Attack.write(180);
+  delay(100);
+  }
+  
+void Dtt(){
+  Attack.write(35);
+  delay(100);
+  }
+  
+ int readPing() { 
+  delay(70);
+  int cm = sonar.ping_cm();
+  if(cm==0)
+  {
+    cm = 250;
+  }
+  return cm;
+}
